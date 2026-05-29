@@ -1,19 +1,21 @@
-# Render Blueprint for MaMaTina
+# Render Blueprint for MaMaTina — FREE TIER (no card required)
 #
-# Deploy this by connecting your GitHub repo at https://render.com/
-# and choosing "New + → Blueprint" — Render will detect this file.
+# Limitations of this configuration:
+#   - The file system resets on every deploy or restart, so any products,
+#     photos, settings, or admin password changes made through /admin will
+#     revert to defaults on the next deploy.
+#   - The service spins down after 15 minutes of inactivity; the first
+#     request after that takes ~30 seconds to wake.
 #
-# This setup uses a 1 GB persistent disk mounted at /var/data so that
-# your products, photos, settings, and admin login survive deploys.
-# To run on the FREE tier instead, change "plan: starter" to "plan: free"
-# and DELETE the entire `disk:` block — but note that all your data
-# (admin password, uploaded photos, products) will reset on every deploy.
+# This is perfect for client demos. When you're ready for a real launch,
+# upgrade by changing `plan: free` to `plan: starter` and adding a disk
+# block — see DEPLOY.md for the production config.
 
 services:
   - type: web
     name: mamatina
     runtime: node
-    plan: starter
+    plan: free
     region: oregon
     branch: main
     buildCommand: npm install && npm run build
@@ -27,11 +29,3 @@ services:
         value: production
       - key: SESSION_SECRET
         generateValue: true
-      - key: DATA_DIR
-        value: /var/data
-      - key: UPLOADS_DIR
-        value: /var/data/uploads
-    disk:
-      name: mamatina-data
-      mountPath: /var/data
-      sizeGB: 1
