@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1500" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="80%">
+      <stop offset="0%" stop-color="#F2E9D8"/>
+      <stop offset="100%" stop-color="#D4C4A8"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="45%" r="65%">
+      <stop offset="0%" stop-color="#FFFEFB"/>
+      <stop offset="100%" stop-color="#E8DCC4"/>
+    </radialGradient>
+    <radialGradient id="pudding" cx="50%" cy="42%" r="60%">
+      <stop offset="0%" stop-color="#FFFCF4"/>
+      <stop offset="100%" stop-color="#F0E5CC"/>
+    </radialGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2"/>
+    </filter>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="11"/>
+      <feColorMatrix values="0 0 0 0 0.2  0 0 0 0 0.15  0 0 0 0 0.1  0 0 0 0.08 0"/>
+      <feComposite in2="SourceGraphic" operator="in"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="1500" fill="url(#bg)"/>
+  <line x1="0" y1="1170.0" x2="1200" y2="1172.0" stroke="#3D2817" stroke-width="1" opacity="0.08"/>
+  <line x1="0" y1="1200.0" x2="1200" y2="1202.0" stroke="#3D2817" stroke-width="1" opacity="0.05"/>
+  <line x1="0" y1="1230.0" x2="1200" y2="1232.0" stroke="#3D2817" stroke-width="1" opacity="0.08"/>
+  <line x1="0" y1="1260.0" x2="1200" y2="1262.0" stroke="#3D2817" stroke-width="1" opacity="0.09"/>
+  <line x1="0" y1="1290.0" x2="1200" y2="1292.0" stroke="#3D2817" stroke-width="1" opacity="0.08"/>
+  <line x1="0" y1="1320.0" x2="1200" y2="1322.0" stroke="#3D2817" stroke-width="1" opacity="0.04"/>
+  <line x1="0" y1="1350.0" x2="1200" y2="1352.0" stroke="#3D2817" stroke-width="1" opacity="0.09"/>
+  <line x1="0" y1="1380.0" x2="1200" y2="1382.0" stroke="#3D2817" stroke-width="1" opacity="0.08"/>
+  <line x1="0" y1="1410.0" x2="1200" y2="1412.0" stroke="#3D2817" stroke-width="1" opacity="0.05"/>
+  <line x1="0" y1="1440.0" x2="1200" y2="1442.0" stroke="#3D2817" stroke-width="1" opacity="0.06"/>
+  <line x1="0" y1="1470.0" x2="1200" y2="1472.0" stroke="#3D2817" stroke-width="1" opacity="0.05"/>
+  <line x1="0" y1="1500.0" x2="1200" y2="1502.0" stroke="#3D2817" stroke-width="1" opacity="0.09"/>
+  <line x1="0" y1="1530.0" x2="1200" y2="1532.0" stroke="#3D2817" stroke-width="1" opacity="0.05"/>
+  <line x1="0" y1="1560.0" x2="1200" y2="1562.0" stroke="#3D2817" stroke-width="1" opacity="0.07"/>
+
+  <!-- table shadow under bowl -->
+  <ellipse cx="600" cy="1137.6" rx="428.4" ry="73.4" fill="#3D2817" opacity="0.12" filter="url(#soft)"/>
+
+  <!-- bowl outer rim -->
+  <circle cx="600" cy="750" r="420.0" fill="#FAF7F2" opacity="0.55"/>
+  <circle cx="600" cy="750" r="408.00000000000006" fill="url(#rim)"/>
+  <circle cx="600" cy="750" r="408.00000000000006" fill="none" stroke="#A8893F" stroke-width="1.5" opacity="0.18"/>
+
+  <!-- pudding surface -->
+  <circle cx="600" cy="750" r="346.8" fill="url(#pudding)"/>
+  <!-- subtle highlight -->
+  <ellipse cx="513.3" cy="663.3" rx="190.7" ry="121.4" fill="#FFFFFE" opacity="0.35"/>
+
+  <!-- garnish -->
+  <circle cx="609.4" cy="892.3" r="3.4" fill="#A8893F" opacity="0.84"/>
+  <circle cx="649.1" cy="685.0" r="4.9" fill="#A8893F" opacity="0.64"/>
+  <circle cx="636.0" cy="612.9" r="3.4" fill="#7B5E2A" opacity="0.76"/>
+  <circle cx="483.9" cy="617.9" r="3.9" fill="#3D2817" opacity="0.71"/>
+  <circle cx="776.4" cy="916.0" r="5.1" fill="#A8893F" opacity="0.67"/>
+  <circle cx="757.9" cy="895.9" r="2.2" fill="#7B5E2A" opacity="0.92"/>
+  <circle cx="687.8" cy="533.1" r="5.9" fill="#A8893F" opacity="0.69"/>
+  <circle cx="608.4" cy="702.2" r="2.9" fill="#3D2817" opacity="0.62"/>
+  <circle cx="543.8" cy="997.8" r="5.0" fill="#3D2817" opacity="0.84"/>
+  <circle cx="713.0" cy="902.2" r="4.4" fill="#7B5E2A" opacity="0.72"/>
+  <circle cx="594.4" cy="963.0" r="3.8" fill="#A8893F" opacity="0.85"/>
+  <circle cx="636.1" cy="788.9" r="4.8" fill="#7B5E2A" opacity="0.78"/>
+  <circle cx="545.5" cy="1015.8" r="2.6" fill="#A8893F" opacity="0.57"/>
+  <circle cx="445.3" cy="735.8" r="3.3" fill="#3D2817" opacity="0.75"/>
+  <circle cx="663.9" cy="940.8" r="2.8" fill="#7B5E2A" opacity="0.70"/>
+  <circle cx="645.5" cy="807.0" r="4.8" fill="#3D2817" opacity="0.56"/>
+  <circle cx="592.0" cy="914.4" r="5.2" fill="#7B5E2A" opacity="0.68"/>
+  <circle cx="816.3" cy="719.1" r="4.8" fill="#3D2817" opacity="0.56"/>
+  <circle cx="489.6" cy="616.7" r="2.7" fill="#7B5E2A" opacity="0.91"/>
+  <circle cx="312.5" cy="774.1" r="4.5" fill="#3D2817" opacity="0.64"/>
+  <circle cx="444.5" cy="636.0" r="2.4" fill="#3D2817" opacity="0.68"/>
+  <circle cx="619.0" cy="945.3" r="4.7" fill="#7B5E2A" opacity="0.79"/>
+  <circle cx="791.6" cy="627.1" r="4.2" fill="#A8893F" opacity="0.86"/>
+  <circle cx="541.9" cy="523.7" r="2.7" fill="#7B5E2A" opacity="0.69"/>
+  <circle cx="606.9" cy="752.9" r="2.2" fill="#A8893F" opacity="0.78"/>
+  <circle cx="769.6" cy="664.1" r="3.5" fill="#3D2817" opacity="0.72"/>
+  <circle cx="812.6" cy="616.6" r="3.6" fill="#A8893F" opacity="0.81"/>
+  <circle cx="420.4" cy="764.8" r="2.6" fill="#A8893F" opacity="0.76"/>
+  <circle cx="410.8" cy="748.4" r="4.5" fill="#7B5E2A" opacity="0.65"/>
+  <circle cx="392.9" cy="754.2" r="4.6" fill="#3D2817" opacity="0.83"/>
+  <circle cx="628.4" cy="516.4" r="3.0" fill="#A8893F" opacity="0.84"/>
+  <circle cx="443.6" cy="608.9" r="3.2" fill="#3D2817" opacity="0.58"/>
+
+  
+
+  <!-- grain overlay -->
+  <rect width="1200" height="1500" filter="url(#grain)" opacity="0.5"/>
+
+  
+</svg>
