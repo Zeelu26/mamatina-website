@@ -28,7 +28,7 @@ export default function About({ about }: { about: Settings["about"] }) {
         </div>
 
         <div className="md:col-span-6 order-1 md:order-2">
-          <div className="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-[0_40px_100px_-40px_rgba(61,40,23,0.4)]">
+          <div className="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-[0_40px_100px_-40px_rgba(58,35,88,0.4)]">
             {about.imageUrl ? (
               <img
                 src={about.imageUrl}

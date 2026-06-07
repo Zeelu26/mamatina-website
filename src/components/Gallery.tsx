@@ -53,7 +53,7 @@ export default function Gallery({
             ))}
           </div>
         ) : gallery.shuffleEnabled ? (
-          <div className="relative max-w-5xl mx-auto aspect-[16/10] rounded-3xl overflow-hidden shadow-[0_50px_120px_-50px_rgba(61,40,23,0.5)]">
+          <div className="relative max-w-5xl mx-auto aspect-[16/10] rounded-3xl overflow-hidden shadow-[0_50px_120px_-50px_rgba(58,35,88,0.5)]">
             {ordered.map((p, i) => (
               <div
                 key={p.id}

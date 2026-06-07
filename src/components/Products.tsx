@@ -39,7 +39,7 @@ export default function Products({ products }: { products: Product[] }) {
             return (
               <article
                 key={p.id}
-                className="luxe-card overflow-hidden group hover:-translate-y-1 hover:shadow-[0_50px_100px_-50px_rgba(61,40,23,0.5)]"
+                className="luxe-card overflow-hidden group hover:-translate-y-1 hover:shadow-[0_50px_100px_-50px_rgba(58,35,88,0.5)]"
               >
                 <div className="relative aspect-[4/5] overflow-hidden">
                   {p.imageUrl ? (

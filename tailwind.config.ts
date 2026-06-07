@@ -5,16 +5,19 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        cream: "#FAF7F2",
-        beige: "#E8DCC4",
-        "warm-beige": "#D4C4A8",
-        gold: "#C9A961",
+        // Royal purple + gold luxury palette.
+        // Token names kept (chocolate/cream/etc.) so every component
+        // inherits the new shades automatically.
+        cream: "#F8F5FB", // soft lavender-white base
+        beige: "#E9E1F0", // soft mauve
+        "warm-beige": "#CDBCDD", // muted lilac
+        gold: "#C9A961", // gilt accent (pairs with royal purple)
         "gold-dark": "#A8893F",
-        chocolate: "#3D2817",
-        "chocolate-soft": "#5A3E26",
+        chocolate: "#3A2358", // deep royal purple — primary anchor
+        "chocolate-soft": "#5C3E86", // medium amethyst
         "soft-white": "#FFFEFB",
-        "soft-black": "#1A1410",
-        sand: "#F2E9D8",
+        "soft-black": "#1B1029", // near-black aubergine
+        sand: "#F0E9F7", // light lavender section background
       },
       fontFamily: {
         serif: ["var(--font-playfair)", "Georgia", "serif"],

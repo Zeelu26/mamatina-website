@@ -22,8 +22,8 @@ function rng(seed) {
 function bowl({
   w = 1200,
   h = 1500,
-  bgFrom = "#F2E9D8",
-  bgTo = "#D4C4A8",
+  bgFrom = "#F0E9F7",
+  bgTo = "#CDBCDD",
   rimFrom = "#FFFEFB",
   rimTo = "#E8DCC4",
   puddingFrom = "#FFFCF4",
@@ -59,7 +59,7 @@ function bowl({
     const y = h * 0.78 + i * (h * 0.02);
     const op = 0.04 + rand() * 0.05;
     linenStrokes.push(
-      `<line x1="0" y1="${y.toFixed(1)}" x2="${w}" y2="${(y + 2).toFixed(1)}" stroke="#3D2817" stroke-width="1" opacity="${op.toFixed(2)}"/>`,
+      `<line x1="0" y1="${y.toFixed(1)}" x2="${w}" y2="${(y + 2).toFixed(1)}" stroke="#3A2358" stroke-width="1" opacity="${op.toFixed(2)}"/>`,
     );
   }
 
@@ -92,7 +92,7 @@ function bowl({
     </filter>
     <filter id="grain" x="0" y="0" width="100%" height="100%">
       <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="${seed}"/>
-      <feColorMatrix values="0 0 0 0 0.2  0 0 0 0 0.15  0 0 0 0 0.1  0 0 0 0.08 0"/>
+      <feColorMatrix values="0 0 0 0 0.16  0 0 0 0 0.1  0 0 0 0 0.22  0 0 0 0.08 0"/>
       <feComposite in2="SourceGraphic" operator="in"/>
     </filter>
   </defs>
@@ -101,7 +101,7 @@ function bowl({
   ${linenStrokes.join("\n  ")}
 
   <!-- table shadow under bowl -->
-  <ellipse cx="${cx}" cy="${(cy + bowlR * 0.95).toFixed(1)}" rx="${(bowlR * 1.05).toFixed(1)}" ry="${(bowlR * 0.18).toFixed(1)}" fill="#3D2817" opacity="0.12" filter="url(#soft)"/>
+  <ellipse cx="${cx}" cy="${(cy + bowlR * 0.95).toFixed(1)}" rx="${(bowlR * 1.05).toFixed(1)}" ry="${(bowlR * 0.18).toFixed(1)}" fill="#3A2358" opacity="0.12" filter="url(#soft)"/>
 
   <!-- bowl outer rim -->
   <circle cx="${cx}" cy="${cy}" r="${(bowlR + 12).toFixed(1)}" fill="#FAF7F2" opacity="0.55"/>
@@ -121,7 +121,7 @@ function bowl({
   <!-- grain overlay -->
   <rect width="${w}" height="${h}" filter="url(#grain)" opacity="0.5"/>
 
-  ${caption ? `<text x="${cx}" y="${h - 60}" text-anchor="middle" font-family="Georgia, serif" font-size="${(w * 0.018).toFixed(0)}" fill="#3D2817" opacity="0.45" font-style="italic">${caption}</text>` : ""}
+  ${caption ? `<text x="${cx}" y="${h - 60}" text-anchor="middle" font-family="Georgia, serif" font-size="${(w * 0.018).toFixed(0)}" fill="#3A2358" opacity="0.45" font-style="italic">${caption}</text>` : ""}
 </svg>`;
 }
 
@@ -132,27 +132,27 @@ const flavors = [
   {
     name: "vanilla",
     puddingFrom: "#FFFCF4", puddingTo: "#F0E5CC",
-    garnish: ["#A8893F", "#7B5E2A", "#3D2817"], // vanilla flecks + cinnamon
+    garnish: ["#A8893F", "#7B5E2A", "#3A2358"], // vanilla flecks + cinnamon
     seed: 11,
   },
   {
     name: "caramel",
     puddingFrom: "#EFD4A0", puddingTo: "#C28E48",
-    bgFrom: "#EDDAB8", bgTo: "#C9A961",
-    garnish: ["#3D2817", "#5A3E26", "#FFFEFB"], // sea salt flakes
+    bgFrom: "#EDE4F4", bgTo: "#CDBCDD",
+    garnish: ["#3A2358", "#5A3E26", "#FFFEFB"], // sea salt flakes
     seed: 22,
   },
   {
     name: "pistachio",
     puddingFrom: "#E8E0BD", puddingTo: "#B8B07A",
-    bgFrom: "#E5DEC1", bgTo: "#B8B07A",
+    bgFrom: "#EDE4F4", bgTo: "#CDBCDD",
     garnish: ["#5A6B2F", "#7A8B3F", "#C49A6C"], // pistachio + rose
     seed: 33,
   },
   {
     name: "chocolate",
-    puddingFrom: "#7A4B2A", puddingTo: "#3D2817",
-    bgFrom: "#E8DCC4", bgTo: "#A8893F",
+    puddingFrom: "#7A4B2A", puddingTo: "#4A2E1A",
+    bgFrom: "#EDE4F4", bgTo: "#CDBCDD",
     rimFrom: "#F2E4C6", rimTo: "#C9A961",
     garnish: ["#FFFEFB", "#C9A961", "#5A3E26"], // espresso beans + cream
     seed: 44,
@@ -160,14 +160,14 @@ const flavors = [
   {
     name: "honey-fig",
     puddingFrom: "#F2D88C", puddingTo: "#C9A961",
-    bgFrom: "#EDDAB0", bgTo: "#C49A6C",
+    bgFrom: "#EDE4F4", bgTo: "#CDBCDD",
     garnish: ["#5A2E1B", "#8B3A1F", "#C9A961"], // figs + saffron
     seed: 55,
   },
   {
     name: "cardamom-coconut",
     puddingFrom: "#FBF5E4", puddingTo: "#E0CFA8",
-    garnish: ["#7A5C2E", "#3D2817", "#FFFEFB"], // toasted coconut + cardamom
+    garnish: ["#7A5C2E", "#3A2358", "#FFFEFB"], // toasted coconut + cardamom
     seed: 66,
   },
 ];
