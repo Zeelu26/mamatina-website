@@ -5,6 +5,7 @@
 @layer base {
   :root {
     --grain-opacity: 0.05;
+    --ann-h: 0px;
   }
   html {
     scroll-behavior: smooth;

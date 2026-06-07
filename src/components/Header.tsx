@@ -24,7 +24,8 @@ export default function Header({ brand }: { brand: string }) {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-40 transition-all duration-500 ${
+      style={{ top: "var(--ann-h, 0px)" }}
+      className={`fixed inset-x-0 z-40 transition-all duration-500 ${
         scrolled
           ? "bg-cream/85 backdrop-blur-md border-b border-beige/60 py-3"
           : "bg-transparent py-5"
