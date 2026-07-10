@@ -1,0 +1,868 @@
+
+==================================================
+FILE: src/app/admin/dashboard/about/page.tsx
+==================================================
+
+import { readDB } from "@/lib/db";
+import { PageHead } from "../ui";
+import AboutForm from "./AboutForm";
+
+export const dynamic = "force-dynamic";
+
+export default async function AboutPage() {
+  const db = await readDB();
+  return (
+    <>
+      <PageHead
+        eyebrow="Homepage"
+        title="About Section"
+        sub="The brand story. Eyebrow, title, paragraph, and image."
+      />
+      <AboutForm about={db.settings.about} />
+    </>
+  );
+}
+
+==================================================
+FILE: src/app/admin/dashboard/business/page.tsx
+==================================================
+
+import { readDB } from "@/lib/db";
+import { PageHead } from "../ui";
+import BusinessForm from "./BusinessForm";
+
+export const dynamic = "force-dynamic";
+
+export default async function BusinessPage() {
+  const db = await readDB();
+  return (
+    <>
+      <PageHead
+        eyebrow="Brand"
+        title="Business Information"
+        sub="Contact details, social links, business hours, and the announcement banner."
+      />
+      <BusinessForm
+        business={db.settings.business}
+        announcement={db.settings.announcement}
+        footer={db.settings.footer}
+      />
+    </>
+  );
+}
+
+==================================================
+FILE: src/app/admin/dashboard/messages/page.tsx
+==================================================
+
+import { readDB } from "@/lib/db";
+import { PageHead } from "../ui";
+import MessagesView from "./MessagesView";
+
+export const dynamic = "force-dynamic";
+
+export default async function MessagesPage() {
+  const db = await readDB();
+  return (
+    <>
+      <PageHead
+        eyebrow="Inbox"
+        title="Contact Messages"
+        sub="All inquiries from the contact form. Export to CSV for catering or events."
+      />
+      <MessagesView initial={db.messages} />
+    </>
+  );
+}
+
+==================================================
+FILE: src/app/admin/dashboard/reviews/page.tsx
+==================================================
+
+import { readDB } from "@/lib/db";
+import { PageHead } from "../ui";
+import ReviewsManager from "./ReviewsManager";
+
+export const dynamic = "force-dynamic";
+
+export default async function ReviewsAdminPage() {
+  const db = await readDB();
+  return (
+    <>
+      <PageHead
+        eyebrow="Voices"
+        title="Customer Reviews"
+        sub="Approve, edit, feature, or delete reviews. Customer-submitted reviews appear here until approved."
+      />
+      <ReviewsManager initial={db.reviews} />
+    </>
+  );
+}
+
+==================================================
+FILE: src/app/admin/dashboard/settings/page.tsx
+==================================================
+
+import { readDB } from "@/lib/db";
+import { PageHead } from "../ui";
+import SettingsForm from "./SettingsForm";
+
+export const dynamic = "force-dynamic";
+
+export default async function SettingsPage() {
+  const db = await readDB();
+  return (
+    <>
+      <PageHead
+        eyebrow="Site"
+        title="Site Settings"
+        sub="SEO, branding assets, legal text, and maintenance mode."
+      />
+      <SettingsForm
+        seo={db.settings.seo}
+        legal={db.settings.legal}
+        maintenanceMode={db.settings.maintenanceMode}
+      />
+    </>
+  );
+}
+
+==================================================
+FILE: src/app/admin/dashboard/subscribers/page.tsx
+==================================================
+
+import { readDB } from "@/lib/db";
+import { PageHead, Card } from "../ui";
+
+export const dynamic = "force-dynamic";
+
+export default async function SubscribersPage() {
+  const db = await readDB();
+  const subs = [...db.subscribers].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+
+  return (
+    <>
+      <PageHead
+        eyebrow="Audience"
+        title="Newsletter Subscribers"
+        sub={`${subs.length} ${subs.length === 1 ? "person is" : "people are"} on your list.`}
+      />
+
+      <div className="mb-6">
+        <a
+          href="/api/subscribers/export"
+          className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[11px] uppercase tracking-widest-2 bg-chocolate hover:bg-soft-black text-cream transition"
+        >
+          Export CSV
+        </a>
+      </div>
+
+      {subs.length === 0 ? (
+        <Card>
+          <div className="text-chocolate/55 italic text-sm">No subscribers yet.</div>
+        </Card>
+      ) : (
+        <Card>
+          <ul className="divide-y divide-beige/70">
+            {subs.map((s) => (
+              <li key={s.id} className="py-3 flex items-center justify-between text-sm">
+                <span className="text-chocolate">{s.email}</span>
+                <span className="text-[10px] uppercase tracking-widest-2 text-chocolate/45">
+                  {new Date(s.createdAt).toLocaleDateString()}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
+    </>
+  );
+}
+
+==================================================
+FILE: src/app/admin/dashboard/page.tsx
+==================================================
+
+import Link from "next/link";
+import { readDB } from "@/lib/db";
+import { PageHead, Card } from "./ui";
+
+export const dynamic = "force-dynamic";
+
+export default async function DashboardPage() {
+  const db = await readDB();
+  const unread = db.messages.filter((m) => !m.read).length;
+  const pending = db.reviews.filter((r) => !r.approved).length;
+
+  const stats = [
+    { label: "Total Messages", value: db.messages.length, href: "/admin/dashboard/messages" },
+    { label: "Unread", value: unread, href: "/admin/dashboard/messages" },
+    { label: "Products", value: db.products.length, href: "/admin/dashboard/products" },
+    { label: "Reviews · Pending", value: `${db.reviews.length} · ${pending}`, href: "/admin/dashboard/reviews" },
+    { label: "Subscribers", value: db.subscribers.length, href: "/admin/dashboard/subscribers" },
+    { label: "Gallery Photos", value: db.galleryPhotos.length, href: "/admin/dashboard/gallery" },
+  ];
+
+  const recentMessages = [...db.messages]
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    .slice(0, 5);
+
+  return (
+    <>
+      <PageHead
+        eyebrow="Welcome"
+        title="Good day at MaMaTina."
+        sub="A quiet overview of what's happening today. Choose a section on the left to make changes."
+      />
+
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-5 mb-12">
+        {stats.map((s) => (
+          <Link
+            key={s.label}
+            href={s.href}
+            className="luxe-card p-6 hover:-translate-y-0.5 transition group block"
+          >
+            <div className="text-[10px] uppercase tracking-widest-2 text-chocolate/55">
+              {s.label}
+            </div>
+            <div className="font-display text-3xl text-chocolate mt-3 group-hover:text-gold-dark transition">
+              {s.value}
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      <h2 className="font-display text-2xl text-chocolate mb-4">Recent messages</h2>
+      <Card>
+        {recentMessages.length === 0 ? (
+          <div className="text-chocolate/55 italic text-sm">No messages yet.</div>
+        ) : (
+          <ul className="divide-y divide-beige/70">
+            {recentMessages.map((m) => (
+              <li key={m.id} className="py-4 flex items-center justify-between gap-4">
+                <div className="min-w-0">
+                  <div className="text-sm text-chocolate font-medium truncate">
+                    {m.name}{" "}
+                    <span className="text-chocolate/50 font-normal text-xs">
+                      · {m.email}
+                    </span>
+                  </div>
+                  <div className="text-xs text-chocolate/60 truncate mt-0.5">
+                    {m.message}
+                  </div>
+                </div>
+                <div className="text-[10px] uppercase tracking-widest-2 text-chocolate/50 shrink-0">
+                  {new Date(m.createdAt).toLocaleDateString()}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+        <div className="mt-6">
+          <Link
+            href="/admin/dashboard/messages"
+            className="text-[11px] uppercase tracking-widest-2 text-gold-dark hover:text-chocolate"
+          >
+            View all messages →
+          </Link>
+        </div>
+      </Card>
+    </>
+  );
+}
+
+==================================================
+FILE: src/app/api/auth/login/route.ts
+==================================================
+
+import { NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
+import { readDB } from "@/lib/db";
+import { createSession, setSessionCookie } from "@/lib/auth";
+
+export async function POST(req: Request) {
+  try {
+    const { email, password } = await req.json();
+    if (typeof email !== "string" || typeof password !== "string") {
+      return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+    }
+    const db = await readDB();
+    const admin = db.admins.find(
+      (a) => a.email.toLowerCase() === email.toLowerCase(),
+    );
+    if (!admin) {
+      await bcrypt.hash(password, 10);
+      return NextResponse.json({ error: "Invalid credentials." }, { status: 401 });
+    }
+    const ok = await bcrypt.compare(password, admin.passwordHash);
+    if (!ok) {
+      return NextResponse.json({ error: "Invalid credentials." }, { status: 401 });
+    }
+    const token = await createSession({ sub: admin.id, email: admin.email });
+    await setSessionCookie(token);
+    return NextResponse.json({ ok: true });
+  } catch {
+    return NextResponse.json({ error: "Login failed." }, { status: 500 });
+  }
+}
+
+==================================================
+FILE: src/app/api/contact/route.ts
+==================================================
+
+import { NextResponse } from "next/server";
+import { v4 as uuid } from "uuid";
+import { updateDB } from "@/lib/db";
+
+const recent = new Map<string, number>();
+const RATE_WINDOW = 60 * 1000;
+
+function rateLimit(ip: string) {
+  const now = Date.now();
+  const last = recent.get(ip) || 0;
+  if (now - last < RATE_WINDOW) return false;
+  recent.set(ip, now);
+  return true;
+}
+
+export async function POST(req: Request) {
+  try {
+    const data = await req.json();
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+    if (!rateLimit(ip)) {
+      return NextResponse.json({ error: "Slow down a moment." }, { status: 429 });
+    }
+    const required = ["name", "phone", "email", "message"] as const;
+    for (const k of required) {
+      if (!data[k] || String(data[k]).trim().length === 0) {
+        return NextResponse.json({ error: `Missing ${k}` }, { status: 400 });
+      }
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(data.email))) {
+      return NextResponse.json({ error: "Invalid email" }, { status: 400 });
+    }
+    await updateDB((db) => {
+      db.messages.push({
+        id: uuid(),
+        name: String(data.name).slice(0, 200),
+        phone: String(data.phone).slice(0, 50),
+        email: String(data.email).slice(0, 200),
+        message: String(data.message).slice(0, 5000),
+        productInterest: data.productInterest ? String(data.productInterest).slice(0, 200) : undefined,
+        quantity: data.quantity ? String(data.quantity).slice(0, 100) : undefined,
+        eventDate: data.eventDate ? String(data.eventDate).slice(0, 100) : undefined,
+        read: false,
+        createdAt: new Date().toISOString(),
+      });
+    });
+    return NextResponse.json({ ok: true });
+  } catch {
+    return NextResponse.json({ error: "Failed to send" }, { status: 500 });
+  }
+}
+
+==================================================
+FILE: src/app/api/messages/route.ts
+==================================================
+
+import { NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api";
+import { readDB, updateDB } from "@/lib/db";
+
+export async function GET() {
+  const unauthorized = await requireAdmin();
+  if (unauthorized) return unauthorized;
+  const db = await readDB();
+  return NextResponse.json({ messages: db.messages });
+}
+
+export async function PATCH(req: Request) {
+  const unauthorized = await requireAdmin();
+  if (unauthorized) return unauthorized;
+  const body = await req.json();
+  if (!body.id) return NextResponse.json({ error: "id required" }, { status: 400 });
+  await updateDB((db) => {
+    const m = db.messages.find((x) => x.id === body.id);
+    if (m && typeof body.read === "boolean") m.read = body.read;
+  });
+  return NextResponse.json({ ok: true });
+}
+
+export async function DELETE(req: Request) {
+  const unauthorized = await requireAdmin();
+  if (unauthorized) return unauthorized;
+  const id = new URL(req.url).searchParams.get("id");
+  if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
+  await updateDB((db) => {
+    const idx = db.messages.findIndex((m) => m.id === id);
+    if (idx >= 0) db.messages.splice(idx, 1);
+  });
+  return NextResponse.json({ ok: true });
+}
+
+==================================================
+FILE: src/app/api/messages/export/route.ts
+==================================================
+
+import { requireAdmin } from "@/lib/api";
+import { readDB } from "@/lib/db";
+
+function csvEscape(v: unknown): string {
+  const s = v == null ? "" : String(v);
+  if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+  return s;
+}
+
+export async function GET() {
+  const unauthorized = await requireAdmin();
+  if (unauthorized) return unauthorized;
+  const db = await readDB();
+  const headers = [
+    "Date",
+    "Name",
+    "Email",
+    "Phone",
+    "Flavor",
+    "Quantity",
+    "Event Date",
+    "Read",
+    "Message",
+  ];
+  const rows = [...db.messages]
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    .map((m) =>
+      [
+        new Date(m.createdAt).toLocaleString(),
+        m.name,
+        m.email,
+        m.phone,
+        m.productInterest || "",
+        m.quantity || "",
+        m.eventDate || "",
+        m.read ? "yes" : "no",
+        m.message,
+      ]
+        .map(csvEscape)
+        .join(","),
+    );
+  const csv = [headers.join(","), ...rows].join("\n");
+  return new Response(csv, {
+    headers: {
+      "Content-Type": "text/csv; charset=utf-8",
+      "Content-Disposition": `attachment; filename="messages-${Date.now()}.csv"`,
+    },
+  });
+}
+
+==================================================
+FILE: src/app/api/newsletter/route.ts
+==================================================
+
+import { NextResponse } from "next/server";
+import { v4 as uuid } from "uuid";
+import { updateDB } from "@/lib/db";
+
+export async function POST(req: Request) {
+  try {
+    const { email } = await req.json();
+    if (typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json({ error: "Invalid email" }, { status: 400 });
+    }
+    await updateDB((db) => {
+      const existing = db.subscribers.find(
+        (s) => s.email.toLowerCase() === email.toLowerCase(),
+      );
+      if (!existing) {
+        db.subscribers.push({
+          id: uuid(),
+          email: email.toLowerCase(),
+          createdAt: new Date().toISOString(),
+        });
+      }
+    });
+    return NextResponse.json({ ok: true });
+  } catch {
+    return NextResponse.json({ error: "Failed" }, { status: 500 });
+  }
+}
+
+==================================================
+FILE: src/app/api/reviews/route.ts
+==================================================
+
+import { NextResponse } from "next/server";
+import { v4 as uuid } from "uuid";
+import { updateDB } from "@/lib/db";
+
+export async function POST(req: Request) {
+  try {
+    const { customerName, rating, text } = await req.json();
+    if (typeof customerName !== "string" || customerName.trim().length < 1) {
+      return NextResponse.json({ error: "Name required" }, { status: 400 });
+    }
+    if (typeof text !== "string" || text.trim().length < 5) {
+      return NextResponse.json({ error: "Review too short" }, { status: 400 });
+    }
+    const r = Math.min(5, Math.max(1, Number(rating) || 5));
+    await updateDB((db) => {
+      db.reviews.push({
+        id: uuid(),
+        customerName: customerName.slice(0, 200),
+        rating: r,
+        text: text.slice(0, 2000),
+        approved: false,
+        featured: false,
+        date: new Date().toISOString(),
+      });
+    });
+    return NextResponse.json({ ok: true });
+  } catch {
+    return NextResponse.json({ error: "Failed" }, { status: 500 });
+  }
+}
+
+==================================================
+FILE: src/app/api/reviews/admin/route.ts
+==================================================
+
+import { NextResponse } from "next/server";
+import { v4 as uuid } from "uuid";
+import { requireAdmin } from "@/lib/api";
+import { readDB, updateDB } from "@/lib/db";
+import type { Review } from "@/lib/types";
+
+export async function GET() {
+  const unauthorized = await requireAdmin();
+  if (unauthorized) return unauthorized;
+  const db = await readDB();
+  return NextResponse.json({ reviews: db.reviews });
+}
+
+function parse(input: any): Omit<Review, "id" | "date"> {
+  return {
+    customerName: String(input.customerName || "").slice(0, 200),
+    rating: Math.min(5, Math.max(1, Number(input.rating) || 5)),
+    text: String(input.text || "").slice(0, 2000),
+    photoUrl: input.photoUrl ? String(input.photoUrl) : undefined,
+    approved: !!input.approved,
+    featured: !!input.featured,
+  };
+}
+
+export async function POST(req: Request) {
+  const unauthorized = await requireAdmin();
+  if (unauthorized) return unauthorized;
+  const body = await req.json();
+  await updateDB((db) => {
+    db.reviews.push({
+      id: uuid(),
+      ...parse(body),
+      date: new Date().toISOString(),
+    });
+  });
+  return NextResponse.json({ ok: true });
+}
+
+export async function PUT(req: Request) {
+  const unauthorized = await requireAdmin();
+  if (unauthorized) return unauthorized;
+  const body = await req.json();
+  if (!body.id) return NextResponse.json({ error: "id required" }, { status: 400 });
+  await updateDB((db) => {
+    const r = db.reviews.find((x) => x.id === body.id);
+    if (r) Object.assign(r, parse(body));
+  });
+  return NextResponse.json({ ok: true });
+}
+
+export async function PATCH(req: Request) {
+  const unauthorized = await requireAdmin();
+  if (unauthorized) return unauthorized;
+  const body = await req.json();
+  if (!body.id) return NextResponse.json({ error: "id required" }, { status: 400 });
+  await updateDB((db) => {
+    const r = db.reviews.find((x) => x.id === body.id);
+    if (r) {
+      if (typeof body.approved === "boolean") r.approved = body.approved;
+      if (typeof body.featured === "boolean") r.featured = body.featured;
+    }
+  });
+  return NextResponse.json({ ok: true });
+}
+
+export async function DELETE(req: Request) {
+  const unauthorized = await requireAdmin();
+  if (unauthorized) return unauthorized;
+  const id = new URL(req.url).searchParams.get("id");
+  if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
+  await updateDB((db) => {
+    const idx = db.reviews.findIndex((r) => r.id === id);
+    if (idx >= 0) db.reviews.splice(idx, 1);
+  });
+  return NextResponse.json({ ok: true });
+}
+
+==================================================
+FILE: src/app/api/settings/route.ts
+==================================================
+
+import { NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api";
+import { updateDB } from "@/lib/db";
+
+export async function PATCH(req: Request) {
+  const unauthorized = await requireAdmin();
+  if (unauthorized) return unauthorized;
+  try {
+    const patch = await req.json();
+    const next = await updateDB((db) => {
+      db.settings = {
+        ...db.settings,
+        ...patch,
+        business: { ...db.settings.business, ...(patch.business || {}) },
+        hero: { ...db.settings.hero, ...(patch.hero || {}) },
+        about: { ...db.settings.about, ...(patch.about || {}) },
+        gallery: { ...db.settings.gallery, ...(patch.gallery || {}) },
+        announcement: { ...db.settings.announcement, ...(patch.announcement || {}) },
+        seo: { ...db.settings.seo, ...(patch.seo || {}) },
+        legal: { ...db.settings.legal, ...(patch.legal || {}) },
+        footer: { ...db.settings.footer, ...(patch.footer || {}) },
+      };
+    });
+    return NextResponse.json({ ok: true, settings: next.settings });
+  } catch {
+    return NextResponse.json({ error: "Save failed" }, { status: 500 });
+  }
+}
+
+==================================================
+FILE: src/app/api/subscribers/export/route.ts
+==================================================
+
+import { requireAdmin } from "@/lib/api";
+import { readDB } from "@/lib/db";
+
+function csvEscape(v: unknown): string {
+  const s = v == null ? "" : String(v);
+  if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+  return s;
+}
+
+export async function GET() {
+  const unauthorized = await requireAdmin();
+  if (unauthorized) return unauthorized;
+  const db = await readDB();
+  const headers = ["Email", "Subscribed At"];
+  const rows = [...db.subscribers]
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    .map((s) => [s.email, new Date(s.createdAt).toLocaleString()].map(csvEscape).join(","));
+  const csv = [headers.join(","), ...rows].join("\n");
+  return new Response(csv, {
+    headers: {
+      "Content-Type": "text/csv; charset=utf-8",
+      "Content-Disposition": `attachment; filename="subscribers-${Date.now()}.csv"`,
+    },
+  });
+}
+
+==================================================
+FILE: src/lib/types.ts
+==================================================
+
+export type HeroPhoto = {
+  id: string;
+  url: string;
+  alt: string;
+  caption?: string;
+  order: number;
+};
+
+export type GalleryPhoto = {
+  id: string;
+  url: string;
+  alt: string;
+  caption?: string;
+  order: number;
+};
+
+export type Product = {
+  id: string;
+  name: string;
+  price: string;
+  shortDescription: string;
+  fullDescription: string;
+  ingredients: string;
+  allergens: string;
+  imageUrl: string;
+  availability: "available" | "sold-out" | "coming-soon";
+  featured: boolean;
+  order: number;
+  createdAt: string;
+};
+
+export type Review = {
+  id: string;
+  customerName: string;
+  rating: number;
+  text: string;
+  photoUrl?: string;
+  date: string;
+  approved: boolean;
+  featured: boolean;
+};
+
+export type ContactMessage = {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+  message: string;
+  productInterest?: string;
+  quantity?: string;
+  eventDate?: string;
+  fileUrl?: string;
+  read: boolean;
+  createdAt: string;
+};
+
+export type NewsletterSubscriber = {
+  id: string;
+  email: string;
+  createdAt: string;
+};
+
+export type Settings = {
+  business: {
+    name: string;
+    tagline: string;
+    phone: string;
+    email: string;
+    address: string;
+    hours: string;
+    socialInstagram: string;
+    socialTiktok: string;
+    socialFacebook: string;
+  };
+  hero: {
+    headline: string;
+    subheading: string;
+    primaryButtonText: string;
+    primaryButtonLink: string;
+    secondaryButtonText: string;
+    secondaryButtonLink: string;
+    shuffleEnabled: boolean;
+    shuffleSeconds: number;
+  };
+  about: {
+    eyebrow: string;
+    title: string;
+    paragraph: string;
+    imageUrl: string;
+  };
+  gallery: {
+    shuffleEnabled: boolean;
+    shuffleSeconds: number;
+  };
+  announcement: {
+    enabled: boolean;
+    text: string;
+  };
+  seo: {
+    title: string;
+    description: string;
+    socialImage: string;
+    analyticsId: string;
+    logoUrl: string;
+    faviconUrl: string;
+  };
+  legal: {
+    privacyPolicy: string;
+    terms: string;
+    cookieBannerText: string;
+  };
+  maintenanceMode: boolean;
+  footer: {
+    copyright: string;
+  };
+};
+
+export type AdminUser = {
+  id: string;
+  email: string;
+  passwordHash: string;
+  createdAt: string;
+};
+
+export type DB = {
+  heroPhotos: HeroPhoto[];
+  galleryPhotos: GalleryPhoto[];
+  products: Product[];
+  reviews: Review[];
+  messages: ContactMessage[];
+  subscribers: NewsletterSubscriber[];
+  settings: Settings;
+  admins: AdminUser[];
+};
+
+==================================================
+FILE: src/lib/api.ts
+==================================================
+
+import { NextResponse } from "next/server";
+import { getSession } from "./auth";
+
+export async function requireAdmin() {
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  return null;
+}
+
+==================================================
+FILE: src/lib/uploads.ts
+==================================================
+
+import fs from "node:fs/promises";
+import path from "node:path";
+import sharp from "sharp";
+import { v4 as uuid } from "uuid";
+
+const UPLOADS_DIR =
+  process.env.UPLOADS_DIR || path.join(process.cwd(), "public", "uploads");
+
+const ALLOWED_MIME = new Set(["image/jpeg", "image/png", "image/webp", "image/avif"]);
+
+export async function saveImage(file: File): Promise<{ url: string; filename: string }> {
+  if (!ALLOWED_MIME.has(file.type)) {
+    throw new Error("Only JPG, PNG, WebP, or AVIF images are allowed.");
+  }
+  const buf = Buffer.from(await file.arrayBuffer());
+
+  if (buf.byteLength > 8 * 1024 * 1024) {
+    throw new Error("Image must be 8 MB or smaller.");
+  }
+
+  await fs.mkdir(UPLOADS_DIR, { recursive: true });
+  const filename = `${uuid()}.webp`;
+  const target = path.join(UPLOADS_DIR, filename);
+
+  await sharp(buf)
+    .rotate()
+    .resize({ width: 2200, height: 2200, fit: "inside", withoutEnlargement: true })
+    .webp({ quality: 82 })
+    .toFile(target);
+
+  return { url: `/uploads/${filename}`, filename };
+}
+
+export async function deleteImage(url: string): Promise<void> {
+  if (!url.startsWith("/uploads/")) return;
+  const filename = path.basename(url);
+  const target = path.join(UPLOADS_DIR, filename);
+  try {
+    await fs.unlink(target);
+  } catch {
+    // ignore missing
+  }
+}
