@@ -1,16 +1,38 @@
 import { requireAdmin } from "@/lib/api";
-import { readDB } from "@/lib/db";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
-function csvEscape(v: unknown): string {
-  const s = v == null ? "" : String(v);
-  if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
-  return s;
+function csvEscape(value: unknown): string {
+  const text = value == null ? "" : String(value);
+
+  if (/[",\n]/.test(text)) {
+    return `"${text.replace(/"/g, '""')}"`;
+  }
+
+  return text;
 }
 
 export async function GET() {
   const unauthorized = await requireAdmin();
-  if (unauthorized) return unauthorized;
-  const db = await readDB();
+
+  if (unauthorized) {
+    return unauthorized;
+  }
+
+  const { data: rows, error } = await supabaseAdmin
+    .from("messages")
+    .select(
+      "name, email, phone, message, product_interest, quantity, event_date, read, created_at"
+    )
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Failed to export messages:", error);
+
+    return new Response("Failed to export messages", {
+      status: 500,
+    });
+  }
+
   const headers = [
     "Date",
     "Name",
@@ -22,24 +44,25 @@ export async function GET() {
     "Read",
     "Message",
   ];
-  const rows = [...db.messages]
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-    .map((m) =>
-      [
-        new Date(m.createdAt).toLocaleString(),
-        m.name,
-        m.email,
-        m.phone,
-        m.productInterest || "",
-        m.quantity || "",
-        m.eventDate || "",
-        m.read ? "yes" : "no",
-        m.message,
-      ]
-        .map(csvEscape)
-        .join(","),
-    );
-  const csv = [headers.join(","), ...rows].join("\n");
+
+  const csvRows = (rows ?? []).map((message) =>
+    [
+      new Date(message.created_at).toLocaleString(),
+      message.name,
+      message.email,
+      message.phone,
+      message.product_interest ?? "",
+      message.quantity ?? "",
+      message.event_date ?? "",
+      message.read ? "yes" : "no",
+      message.message,
+    ]
+      .map(csvEscape)
+      .join(",")
+  );
+
+  const csv = [headers.join(","), ...csvRows].join("\n");
+
   return new Response(csv, {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
