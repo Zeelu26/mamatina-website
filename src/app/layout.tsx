@@ -6,6 +6,7 @@ import {
   Cormorant_Garamond,
 } from "next/font/google";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import type { Settings } from "@/lib/types";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -38,9 +39,10 @@ const fallbackMetadata: Metadata = {
 
 export async function generateMetadata(): Promise<Metadata> {
   try {
-    const { data: settings, error } = await supabaseAdmin
+    const { data: settingsRow, error } = await supabaseAdmin
       .from("settings")
-      .select("*")
+      .select("data")
+      .eq("id", "site")
       .maybeSingle();
 
     if (error) {
@@ -48,6 +50,7 @@ export async function generateMetadata(): Promise<Metadata> {
       return fallbackMetadata;
     }
 
+    const settings = settingsRow?.data as Settings | undefined;
     const seo = settings?.seo;
 
     if (!seo) {
