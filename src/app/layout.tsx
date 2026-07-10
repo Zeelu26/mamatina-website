@@ -1,7 +1,11 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
-import { Playfair_Display, Inter, Cormorant_Garamond } from "next/font/google";
-import { readDB } from "@/lib/db";
+import {
+  Playfair_Display,
+  Inter,
+  Cormorant_Garamond,
+} from "next/font/google";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -24,18 +28,77 @@ const inter = Inter({
   weight: ["300", "400", "500", "600"],
 });
 
+const DEFAULT_TITLE = "MaMaTina";
+const DEFAULT_DESCRIPTION = "Welcome to MaMaTina.";
+
+const fallbackMetadata: Metadata = {
+  title: DEFAULT_TITLE,
+  description: DEFAULT_DESCRIPTION,
+};
+
 export async function generateMetadata(): Promise<Metadata> {
-  const db = await readDB();
-  return {
-    title: db.settings.seo.title,
-    description: db.settings.seo.description,
-    icons: db.settings.seo.faviconUrl ? [{ url: db.settings.seo.faviconUrl }] : undefined,
-    openGraph: {
-      title: db.settings.seo.title,
-      description: db.settings.seo.description,
-      images: db.settings.seo.socialImage ? [db.settings.seo.socialImage] : undefined,
-    },
-  };
+  try {
+    const { data: settings, error } = await supabaseAdmin
+      .from("settings")
+      .select("*")
+      .maybeSingle();
+
+    if (error) {
+      console.error("Failed to load metadata settings:", error);
+      return fallbackMetadata;
+    }
+
+    const seo = settings?.seo;
+
+    if (!seo) {
+      console.error("SEO settings are missing from Supabase.");
+      return fallbackMetadata;
+    }
+
+    const title =
+      typeof seo.title === "string" && seo.title.trim()
+        ? seo.title
+        : DEFAULT_TITLE;
+
+    const description =
+      typeof seo.description === "string" && seo.description.trim()
+        ? seo.description
+        : DEFAULT_DESCRIPTION;
+
+    const faviconUrl =
+      typeof seo.faviconUrl === "string" && seo.faviconUrl.trim()
+        ? seo.faviconUrl
+        : undefined;
+
+    const socialImage =
+      typeof seo.socialImage === "string" && seo.socialImage.trim()
+        ? seo.socialImage
+        : undefined;
+
+    return {
+      title,
+      description,
+      icons: faviconUrl
+        ? {
+            icon: [{ url: faviconUrl }],
+          }
+        : undefined,
+      openGraph: {
+        title,
+        description,
+        images: socialImage
+          ? [
+              {
+                url: socialImage,
+              },
+            ]
+          : undefined,
+      },
+    };
+  } catch (error) {
+    console.error("Unexpected metadata generation error:", error);
+    return fallbackMetadata;
+  }
 }
 
 export const viewport: Viewport = {
@@ -44,9 +107,16 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <html lang="en" className={`${playfair.variable} ${cormorant.variable} ${inter.variable}`}>
+    <html
+      lang="en"
+      className={`${playfair.variable} ${cormorant.variable} ${inter.variable}`}
+    >
       <body>{children}</body>
     </html>
   );
