@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { v4 as uuid } from "uuid";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { sendContactNotification } from "@/lib/email";
 
 const recent = new Map<string, number>();
 const RATE_WINDOW = 60 * 1000;
@@ -52,21 +53,28 @@ export async function POST(req: Request) {
       );
     }
 
+    const name = String(data.name).trim().slice(0, 200);
+    const phone = String(data.phone).trim().slice(0, 50);
+    const message = String(data.message).trim().slice(0, 5000);
+    const productInterest = data.productInterest
+      ? String(data.productInterest).slice(0, 200)
+      : null;
+    const quantity = data.quantity
+      ? String(data.quantity).slice(0, 100)
+      : null;
+    const eventDate = data.eventDate
+      ? String(data.eventDate).slice(0, 100)
+      : null;
+
     const { error } = await supabaseAdmin.from("messages").insert({
       id: uuid(),
-      name: String(data.name).trim().slice(0, 200),
-      phone: String(data.phone).trim().slice(0, 50),
+      name,
+      phone,
       email: email.slice(0, 200),
-      message: String(data.message).trim().slice(0, 5000),
-      product_interest: data.productInterest
-        ? String(data.productInterest).slice(0, 200)
-        : null,
-      quantity: data.quantity
-        ? String(data.quantity).slice(0, 100)
-        : null,
-      event_date: data.eventDate
-        ? String(data.eventDate).slice(0, 100)
-        : null,
+      message,
+      product_interest: productInterest,
+      quantity,
+      event_date: eventDate,
       file_url: data.fileUrl
         ? String(data.fileUrl).slice(0, 1000)
         : null,
@@ -82,6 +90,17 @@ export async function POST(req: Request) {
         { status: 500 }
       );
     }
+
+    // Best-effort owner notification — never blocks or fails the response.
+    await sendContactNotification({
+      name,
+      email,
+      phone,
+      message,
+      productInterest,
+      quantity,
+      eventDate,
+    });
 
     return NextResponse.json({ ok: true });
   } catch (error) {
